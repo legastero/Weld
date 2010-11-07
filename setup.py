@@ -8,7 +8,7 @@ def read(fname):
 
 setup(name='weld',
       version=weld.__version__,
-      description='A Gmail-XMPP transport.',
+      description='A basic Gmail/SMS - XMPP transport.',
       long_description=read('README.rst'),
       classifiers=['Development Status :: 3 - Alpha',
                    'Environment :: Console',
