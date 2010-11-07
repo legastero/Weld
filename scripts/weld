@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+import sys
+import logging
+import time
+from optparse import OptionParser
+
+import sleekxmpp
+from sleekxmpp.xmlstream import ElementBase, ET, register_stanza_plugin
+
+from weld import GmailTransport
+
+
+class ConfigClient(ElementBase):
+    name = "client"
+    namespace = "weld:config"
+    interfaces = set(('owner', 'jid', 'password', 'server', 'port'))
+    sub_interfaces = set(('jid', 'password', 'server', 'port'))
+
+
+class Config(ElementBase):
+    name = "config"
+    namespace = "weld:config"
+    interfaces = set(('jid', 'password', 'server', 'port', 'clients'))
+    sub_interfaces = interfaces
+    subitem = (ConfigClient,)
+
+    def get_clients(self):
+        clients = []
+        clientsXML = self.xml.findall('{%s}client' % self.namespace)
+        for clientXML in clientsXML:
+            client = ConfigClient(xml=clientXML, parent=None)
+            clients.append(client)
+        return clients
+
+
+class ConfigEmail(ElementBase):
+    name = "email"
+    plugin_attrib = "email"
+    namespace = "weld:config"
+    interfaces = set(('username', 'password', 'allowed'))
+    sub_interfaces = interfaces
+
+    def get_allowed(self):
+        allowed = []
+        for allowedXML in self.xml.findall('{%s}allow' % self.namespace):
+            allowed.append(allowedXML.text)
+        return allowed
+
+
+register_stanza_plugin(ConfigClient, ConfigEmail)
+
+
+if __name__ == '__main__':
+    # Setup the command line arguments.
+    optp = OptionParser()
+
+    # Output verbosity options.
+    optp.add_option('-q', '--quiet', help='set logging to ERROR',
+                    action='store_const', dest='loglevel',
+                    const=logging.ERROR, default=logging.INFO)
+    optp.add_option('-d', '--debug', help='set logging to DEBUG',
+                    action='store_const', dest='loglevel',
+                    const=logging.DEBUG, default=logging.INFO)
+    optp.add_option('-v', '--verbose', help='set logging to COMM',
+                    action='store_const', dest='loglevel',
+                    const=5, default=logging.INFO)
+
+    # Component name and secret options.
+    optp.add_option("-c", "--config", help="path to config file",
+                    dest="config", default="config.xml")
+
+    opts, args = optp.parse_args()
+
+    # Setup logging.
+    logging.basicConfig(level=opts.loglevel,
+                        format='%(levelname)-8s %(message)s')
+
+    # Load configuration data.
+    config_file = open(opts.config, 'r+')
+    config_data = "\n".join([line for line in config_file])
+    config = Config(xml=ET.fromstring(config_data))
+    config_file.close()
+
+    xmpp = GmailTransport(config)
+    xmpp.registerPlugin('xep_0030')     # Service Discovery
+    xmpp.registerPlugin('xep_0199')     # XMPP Ping
+    xmpp.registerPlugin('gmail_notify') # Gmail New Mail Notifications
+
+    if xmpp.connect():
+        xmpp.process(threaded=False)
+        print("Done")
+    else:
+        print("Unable to connect.")

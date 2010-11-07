@@ -1,0 +1,32 @@
+<config xmlns="weld:config">
+    <jid>email.localhost</jid>
+    <password>secret</password>
+    <server>localhost</server>
+    <port>8888</port>
+
+    <!-- 
+         The owner is the JID that will receive the Gmail messages.
+         Only messages from the client's owner will be sent as emails.
+    -->
+    <client owner="user@localhost">
+        <!-- GTalk login credentials. -->
+        <jid>example_user@gmail.com</jid>
+        <password>password</password>
+        <server>talk.google.com</server>
+        <port>5222</port>
+
+        <email>
+            <!-- 
+                 Gmail login credentials. 
+                 These will likely be the same as above.
+            -->
+            <username>example_user@gmail.com</username>
+            <password>password</password>
+
+            <!-- Only check for emails from certain senders. -->
+            <allow>other_user@gmail.com</allow>
+            <!-- Can also be used as an SMS transport! -->
+            <allow>5555555555@message.alltel.com</allow>
+        </email>
+    </client>
+</config>
