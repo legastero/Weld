@@ -9,7 +9,7 @@ def read(fname):
 setup(name='weld',
       version=weld.__version__,
       description='A Gmail-XMPP transport.',
-      long_description=read('README'),
+      long_description=read('README.rst'),
       classifiers=['Development Status :: 3 - Alpha',
                    'Environment :: Console',
                    'License :: OSI Approved :: MIT License',

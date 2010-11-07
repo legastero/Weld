@@ -18,7 +18,7 @@ import weld
 
 
 # Setup the command line arguments.
-optp = OptionParser()
+optp = OptionParser(version='%%prog %s' % weld.__version__)
 
 # Output verbosity options.
 optp.add_option('-q', '--quiet', help='set logging to ERROR',
