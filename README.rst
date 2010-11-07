@@ -45,3 +45,7 @@ receive text messages from 5555555555@message.alltel.com. In fact, getting this
 functionality was the whole point of creating Weld in the first place.
 
 .. _`full list`: http://en.wikipedia.org/wiki/List_of_SMS_gateways
+
+Dependencies
+------------
+Weld depends on the latest `SleekXMPP beta release <http://github.com/fritzy/SleekXMPP`_.
