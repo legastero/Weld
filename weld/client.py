@@ -1,3 +1,11 @@
+"""
+    Weld: A Gmail XMPP Gateway
+    Copyright (C) 2010 Lance Stout
+    This file is part of Weld.
+
+    See the file LICENSE for copying permission.
+"""
+
 import logging
 
 import sleekxmpp

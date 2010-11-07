@@ -1,3 +1,11 @@
+"""
+    Weld: A Gmail XMPP Gateway
+    Copyright (C) 2010 Lance Stout
+    This file is part of Weld.
+
+    See the file LICENSE for copying permission.
+"""
+
 import logging
 
 import sleekxmpp
@@ -37,6 +45,7 @@ class GmailTransport(ComponentXMPP):
 
         self.add_event_handler('session_start', self.start)
         self.add_event_handler('disconnected', self.shutdown)
+        self.add_event_handler('killed', self.shutdown)
         self.add_event_handler('got_online', self.online, threaded=True)
         self.add_event_handler('got_offline', self.offline, threaded=True)
         self.add_event_handler('gmail_recv', self.send_message, threaded=True)
@@ -54,6 +63,7 @@ class GmailTransport(ComponentXMPP):
                 self.sendPresence(pto=client, pfrom=agent)
 
     def shutdown(self, event):
+        log.debug("Shutting down gateway.")
         for client in self.clients:
             self.clients[client].disconnect()
             self.sendPresence(pto=client,
@@ -114,7 +124,3 @@ class GmailTransport(ComponentXMPP):
         msg['error']['type'] = 'cancel'
         msg['error']['condition'] = 'forbidden'
         msg.send()
-
-    def disconnect(self, init=True, close=False, reconnect=False):
-        self.event("disconnected")
-        XMLStream.disconnect(self, reconnect)

@@ -1,6 +1,9 @@
-#!/usr/bin/env python
-
 """
+    Weld: A Gmail XMPP Gateway
+    Copyright (C) 2010 Lance Stout
+    This file is part of Weld.
+
+    See the file LICENSE for copying permission.
 """
 
 import os
@@ -19,8 +22,6 @@ log = logging.getLogger(__name__)
 class Gmail(object):
 
     """
-    Methods:
-        send --
     """
 
     def __init__(self, username, password):
