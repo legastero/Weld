@@ -27,9 +27,10 @@ will be turned into an XMPP message like this::
       <body>Just some plain text content.</body>
     </message>
 
-Weld converts email addresses to valid JIDs by replacing the @ character
-with the escape sequence `\\40`. Messages sent to these JIDs will be sent
-as emails.
+Weld converts email addresses to valid JIDs by replacing the @ character with
+the escape sequence `\\40` and using Weld's JID as the domain part. For example,
+example@gmail.com will be turned into example\\40gmail.com@weld.example.com.
+Messages sent to these JIDs will be sent as emails.
 
 To make listening for new emails easier, Weld works with Gmail using Google's
 new mail notification stanzas. A new XMPP client is created for each email
