@@ -23,7 +23,6 @@ class GmailTransport(ComponentXMPP):
         self.email_agents = {}
 
         self.registerPlugin('xep_0030')
-        self.registerPlugin('xep_0199')
 
         self.auto_authorize = True
         self.auto_subscribe = True
@@ -31,7 +30,7 @@ class GmailTransport(ComponentXMPP):
         for client in config['clients']:
             self.clients_config[client['owner']] = client
             self.email_agents[client['owner']] = []
-            for address in client['email']['allowed']:
+            for address in client['allowed']:
                 addr = address[:]
                 addr = '%s@%s' % (addr.replace('@', r'\40'), config['jid'])
                 self.email_agents[client['owner']].append(addr)
@@ -101,7 +100,7 @@ class GmailTransport(ComponentXMPP):
             return
 
         sender = msg['from'].bare
-        if msg['from'].bare in self.clients.keys():
+        if sender in self.clients:
             email = str(msg['to']).split('@')[0]
             email = "@".join(email.split(r'\40'))
             email = email.split("<")[-1].split(">")[0]

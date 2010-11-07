@@ -14,8 +14,14 @@ from weld import GmailTransport
 class ConfigClient(ElementBase):
     name = "client"
     namespace = "weld:config"
-    interfaces = set(('owner', 'jid', 'password', 'server', 'port'))
+    interfaces = set(('owner', 'jid', 'password', 'server', 'port', 'allowed'))
     sub_interfaces = set(('jid', 'password', 'server', 'port'))
+
+    def get_allowed(self):
+        allowed = []
+        for allowedXML in self.xml.findall('{%s}allow' % self.namespace):
+            allowed.append(allowedXML.text)
+        return allowed
 
 
 class Config(ElementBase):
@@ -32,23 +38,6 @@ class Config(ElementBase):
             client = ConfigClient(xml=clientXML, parent=None)
             clients.append(client)
         return clients
-
-
-class ConfigEmail(ElementBase):
-    name = "email"
-    plugin_attrib = "email"
-    namespace = "weld:config"
-    interfaces = set(('username', 'password', 'allowed'))
-    sub_interfaces = interfaces
-
-    def get_allowed(self):
-        allowed = []
-        for allowedXML in self.xml.findall('{%s}allow' % self.namespace):
-            allowed.append(allowedXML.text)
-        return allowed
-
-
-register_stanza_plugin(ConfigClient, ConfigEmail)
 
 
 if __name__ == '__main__':
@@ -84,7 +73,6 @@ if __name__ == '__main__':
 
     xmpp = GmailTransport(config)
     xmpp.registerPlugin('xep_0030')     # Service Discovery
-    xmpp.registerPlugin('xep_0199')     # XMPP Ping
     xmpp.registerPlugin('gmail_notify') # Gmail New Mail Notifications
 
     if xmpp.connect():

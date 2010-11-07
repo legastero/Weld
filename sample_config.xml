@@ -15,18 +15,9 @@
         <server>talk.google.com</server>
         <port>5222</port>
 
-        <email>
-            <!-- 
-                 Gmail login credentials. 
-                 These will likely be the same as above.
-            -->
-            <username>example_user@gmail.com</username>
-            <password>password</password>
-
-            <!-- Only check for emails from certain senders. -->
-            <allow>other_user@gmail.com</allow>
-            <!-- Can also be used as an SMS transport! -->
-            <allow>5555555555@message.alltel.com</allow>
-        </email>
+        <!-- Only check for emails from certain senders. -->
+        <allow>other_user@gmail.com</allow>
+        <!-- Can also be used as an SMS transport! -->
+        <allow>5555555555@message.alltel.com</allow>
     </client>
 </config>

@@ -17,22 +17,22 @@ class GmailClient(ClientXMPP):
 
         self.config = config
         self.component = component
-        self.gmail = Gmail(config['email']['username'],
-                           config['email']['password'])
+        self.gmail = Gmail(config['jid'],
+                           config['password'])
 
         self.registerPlugin('xep_0030')
-        self.registerPlugin('xep_0199')
         self.registerPlugin('gmail_notify')
 
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("disconnected", self.shutdown)
-        self.add_event_handler("gmail_messages", self.recv_gmail)
 
     def start(self, event):
-        self.sendPresence()
+        self.sendPresence(ppriority='0')
         self.getRoster()
         self.gmail.connect()
         self.plugin['gmail_notify'].checkEmail()
+
+        self.add_event_handler("gmail_messages", self.recv_gmail)
 
     def shutdown(self, event):
         self.gmail.disconnect()
@@ -52,7 +52,7 @@ class GmailClient(ClientXMPP):
             if '<' in email_from:
                 email_from = email_from.split('<')[-1].split('>')[0]
 
-            if not email_from in self.config['email']['allowed']:
+            if not email_from in self.config['allowed']:
                 log.debug("Received email from unallowed address.")
                 continue
 
@@ -63,8 +63,8 @@ class GmailClient(ClientXMPP):
                                                 'body': body})
 
     def send_gmail(self, to, subject, email):
-        if email in self.config['email']['allowed']:
+        if to in self.config['allowed']:
             self.gmail.send(to, subject, email)
             return True
-        log.debug("Attempted to send email to unallowed address.")
+        log.debug("Attempted to send email to unallowed address: %s.")
         return False
