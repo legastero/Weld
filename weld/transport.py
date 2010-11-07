@@ -30,7 +30,7 @@ class GmailTransport(ComponentXMPP):
         self.clients = {}
         self.email_agents = {}
 
-        self.registerPlugin('xep_0030')
+        self.register_plugin('xep_0030')
 
         self.auto_authorize = True
         self.auto_subscribe = True

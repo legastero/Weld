@@ -28,18 +28,20 @@ class GmailClient(ClientXMPP):
         self.gmail = Gmail(config['jid'],
                            config['password'])
 
-        self.registerPlugin('xep_0030')
-        self.registerPlugin('gmail_notify')
+        self.register_plugin('xep_0030')
+        self.register_plugin('gmail_notify')
 
         self.add_event_handler("session_start", self.start)
         self.add_event_handler("disconnected", self.shutdown)
 
     def start(self, event):
-        self.sendPresence(ppriority='0')
-        self.getRoster()
+        self.send_presence(ppriority='0')
+        self.get_roster()
         self.gmail.connect()
         self.plugin['gmail_notify'].checkEmail()
 
+        # Don't respond to mail notifications until after we've
+        # connected to the server.
         self.add_event_handler("gmail_messages", self.recv_gmail)
 
     def shutdown(self, event):
