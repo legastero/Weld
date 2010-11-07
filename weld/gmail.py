@@ -22,6 +22,7 @@ log = logging.getLogger(__name__)
 class Gmail(object):
 
     """
+    Send and receive email from Gmail.
     """
 
     def __init__(self, username, password):
@@ -31,6 +32,15 @@ class Gmail(object):
         self.imap = None
 
     def connect(self):
+        """
+        Connect to the Gmail servers over SMTP and IMAP.
+
+        NOTE: Don't connect too frequently (like during testing)
+              or Google will disable your account from accessing
+              from outside of the Gmail web interface. Use
+              https://www.google.com/accounts/UnlockCaptcha
+              to re-enable the account.
+        """
         log.debug('GMAIL: Connecting to server')
         self.smtp = smtplib.SMTP("smtp.gmail.com", 587)
         self.smtp.starttls()
@@ -40,6 +50,7 @@ class Gmail(object):
         self.imap.login(self.__username, self.__password)
 
     def disconnect(self):
+        """Close the SMTP and IMAP connections."""
         log.debug('GMAIL: Disconnecting from server')
         try:
             self.smtp.close()
@@ -50,11 +61,12 @@ class Gmail(object):
 
     def send(self, to, subject, message, attachments=None):
         """
-        Arguments:
-            to          --
-            subject     --
-            message     --
-            attachments --
+        Send an email. May also include attachments.
+
+        to          -- The email recipient.
+        subject     -- The email subject.
+        message     -- The email body.
+        attachments -- A list of file names to include.
         """
         if attachments is None:
             attachments = []
@@ -89,9 +101,11 @@ class Gmail(object):
 
     def check(self, label='INBOX', senders=None):
         """
+        Check for new messages.
+
         Arguments:
-            label
-            senders
+            label   -- The label/folder to check.
+            senders -- Only look for messages from certain senders.
         """
         log.debug('GMAIL: Checking %s for %s' % (label, senders))
 
